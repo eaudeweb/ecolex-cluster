@@ -4,6 +4,7 @@ from pathlib import Path
 from configparser import ConfigParser
 from jinja2 import Environment, FileSystemLoader
 import requests
+import click
 
 path = Path(__file__).parent.resolve()
 
@@ -42,6 +43,12 @@ class Options:
     fixtures = path / 'fixtures'
 
 
+@click.group()
+def cli():
+    pass
+
+
+@cli.command()
 def deploy():
     hcl = render('ecolex.nomad', options=Options())
     spec = requests.post(f'{nomad}/v1/jobs/parse', json={'JobHCL': hcl}).json()
@@ -49,6 +56,4 @@ def deploy():
 
 
 if __name__ == '__main__':
-    import sys
-    assert sys.argv[1:] == ['deploy']
-    deploy()
+    cli()
