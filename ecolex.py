@@ -45,8 +45,7 @@ class Options:
 def deploy():
     hcl = render('ecolex.nomad', options=Options())
     spec = requests.post(f'{nomad}/v1/jobs/parse', json={'JobHCL': hcl}).json()
-    result = requests.post(f'{nomad}/v1/jobs', json={'job': spec}).json()
-    print(result)
+    return requests.post(f'{nomad}/v1/jobs', json={'Job': spec}).json()
 
 
 if __name__ == '__main__':
