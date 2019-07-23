@@ -21,7 +21,6 @@ job "ecolex" {
           MYSQL_DATABASE = ${options.env.MYSQL_DATABASE}
           MYSQL_USER = ${options.env.MYSQL_USER}
           MYSQL_PASSWORD = ${options.env.MYSQL_PASSWORD}
-          EDW_RUN_SOLR_URI = ${options.env.EDW_RUN_SOLR_URI}
           EDW_RUN_WEB_ECOLEX_CODE = ${options.env.EDW_RUN_WEB_ECOLEX_CODE}
           EDW_RUN_WEB_FAOLEX_API_KEY = ${options.env.EDW_RUN_WEB_FAOLEX_API_KEY}
           EDW_RUN_WEB_FAOLEX_CODE = ${options.env.EDW_RUN_WEB_FAOLEX_CODE}
@@ -34,11 +33,11 @@ job "ecolex" {
           EDW_RUN_WEB_SENTRY_PUBLIC_DSN = ${options.env.EDW_RUN_WEB_SENTRY_PUBLIC_DSN}
           EDW_RUN_WEB_STATIC_ROOT = ${options.env.EDW_RUN_WEB_STATIC_ROOT}
           {{- range service "ecolex-solr" }}
-          SOLR_URL = "http://{{.Address}}:{{.Port}}"
+          EDW_RUN_SOLR_URI = "http://{{.Address}}:{{.Port}}"
           {{- end }}
           {{- range service "ecolex-maria" }}
-          MARIA_HOST = {{.Address}}
-          MARIA_PORT = {{.Port}}
+          MYSQL_HOST = {{.Address}}
+          MYSQL_PORT = {{.Port}}
           {{- end }}
         EOF
         destination = "local/docker.env"
