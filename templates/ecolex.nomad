@@ -21,6 +21,7 @@ job "ecolex" {
       template {
         data = <<-EOF
         TZ = "${options.env.TZ}"
+        EDW_RUN_WEB_DEBUG = "${options.env.EDW_RUN_WEB_DEBUG}"
         MYSQL_DATABASE = "${options.env.MYSQL_DATABASE}"
         MYSQL_USER = "${options.env.MYSQL_USER}"
         MYSQL_PASSWORD = "${options.env.MYSQL_PASSWORD}"
