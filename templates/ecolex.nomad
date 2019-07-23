@@ -121,7 +121,7 @@ job "ecolex" {
     task "solr" {
       driver = "docker"
       config {
-        image = "solr:5.5 "
+        image = "solr:5.5"
         args = [
           "docker-entrypoint.sh",
           "solr-precreate",
