@@ -55,5 +55,10 @@ def deploy():
     return requests.post(f'{nomad}/v1/jobs', json={'Job': spec}).json()
 
 
+@cli.command()
+def halt():
+    return requests.delete(f'{nomad}/v1/job/ecolex').json()
+
+
 if __name__ == '__main__':
     cli()
