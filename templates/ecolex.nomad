@@ -6,7 +6,7 @@ job "ecolex" {
     task "web" {
       driver = "docker"
       config {
-        image = "${options.images.ecolex-web}"
+        image = "${options.images['ecolex-web']}"
         volumes = [
           "${options.volumes}/www_ecolex_static:/www_static",
           "${options.volumes}/web_logs:/home/web/ecolex/logs",
@@ -64,7 +64,7 @@ job "ecolex" {
     task "mariadb" {
       driver = "docker"
       config {
-        image = "${options.images.ecolex-mariadb}"
+        image = "${options.images['ecolex-mariadb']}"
         args = ["bash", "/local/startup.sh"]
         volumes = [
           "${options.volumes}/mariadb:/var/lib/mysql",
@@ -126,7 +126,7 @@ job "ecolex" {
     task "solr" {
       driver = "docker"
       config {
-        image = "${options.images.ecolex-solr}"
+        image = "${options.images['ecolex-solr']}"
         args = [
           "docker-entrypoint.sh",
           "solr-precreate",
