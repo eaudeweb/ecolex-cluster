@@ -7,9 +7,14 @@ import requests
 
 path = Path(__file__).parent.resolve()
 
-config = ConfigParser()
-config.optionxform = str
-config.read(path / 'ecolex.ini')
+def read_config(config_path):
+    config = ConfigParser()
+    config.optionxform = str
+    config.read(config_path)
+    return config
+
+versions = read_config(path / 'versions.ini')
+config = read_config(path / 'ecolex.ini')
 nomad = config.get('cluster', 'nomad')
 
 jinja = Environment(
@@ -24,6 +29,7 @@ def render(filename, **kwargs):
 
 
 class Options:
+    images = dict(versions['docker-images'], **config['docker-images'])
     env = dict(config['env'])
     volumes = config.get('ecolex', 'volumes')
     fixtures = path / 'fixtures'
