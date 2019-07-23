@@ -20,28 +20,28 @@ job "ecolex" {
       }
       template {
         data = <<-EOF
-          TZ = ${options.env.TZ}
-          MYSQL_DATABASE = ${options.env.MYSQL_DATABASE}
-          MYSQL_USER = ${options.env.MYSQL_USER}
-          MYSQL_PASSWORD = ${options.env.MYSQL_PASSWORD}
-          EDW_RUN_WEB_ECOLEX_CODE = ${options.env.EDW_RUN_WEB_ECOLEX_CODE}
-          EDW_RUN_WEB_FAOLEX_API_KEY = ${options.env.EDW_RUN_WEB_FAOLEX_API_KEY}
-          EDW_RUN_WEB_FAOLEX_CODE = ${options.env.EDW_RUN_WEB_FAOLEX_CODE}
-          EDW_RUN_WEB_FAOLEX_CODE_2 = ${options.env.EDW_RUN_WEB_FAOLEX_CODE_2}
-          EDW_RUN_WEB_FAOLEX_ENABLED = ${options.env.EDW_RUN_WEB_FAOLEX_ENABLED}
-          EDW_RUN_WEB_INFORMEA_CODE = ${options.env.EDW_RUN_WEB_INFORMEA_CODE}
-          EDW_RUN_WEB_PORT = ${options.env.EDW_RUN_WEB_PORT}
-          EDW_RUN_WEB_SECRET_KEY = ${options.env.EDW_RUN_WEB_SECRET_KEY}
-          EDW_RUN_WEB_SENTRY_DSN = ${options.env.EDW_RUN_WEB_SENTRY_DSN}
-          EDW_RUN_WEB_SENTRY_PUBLIC_DSN = ${options.env.EDW_RUN_WEB_SENTRY_PUBLIC_DSN}
-          EDW_RUN_WEB_STATIC_ROOT = ${options.env.EDW_RUN_WEB_STATIC_ROOT}
-          {{- range service "ecolex-solr" }}
-          EDW_RUN_SOLR_URI = "http://{{.Address}}:{{.Port}}"
-          {{- end }}
-          {{- range service "ecolex-mariadb" }}
-          MYSQL_HOST = {{.Address}}
-          MYSQL_PORT = {{.Port}}
-          {{- end }}
+        TZ = "${options.env.TZ}"
+        MYSQL_DATABASE = "${options.env.MYSQL_DATABASE}"
+        MYSQL_USER = "${options.env.MYSQL_USER}"
+        MYSQL_PASSWORD = "${options.env.MYSQL_PASSWORD}"
+        EDW_RUN_WEB_ECOLEX_CODE = "${options.env.EDW_RUN_WEB_ECOLEX_CODE}"
+        EDW_RUN_WEB_FAOLEX_API_KEY = "${options.env.EDW_RUN_WEB_FAOLEX_API_KEY}"
+        EDW_RUN_WEB_FAOLEX_CODE = "${options.env.EDW_RUN_WEB_FAOLEX_CODE}"
+        EDW_RUN_WEB_FAOLEX_CODE_2 = "${options.env.EDW_RUN_WEB_FAOLEX_CODE_2}"
+        EDW_RUN_WEB_FAOLEX_ENABLED = "${options.env.EDW_RUN_WEB_FAOLEX_ENABLED}"
+        EDW_RUN_WEB_INFORMEA_CODE = "${options.env.EDW_RUN_WEB_INFORMEA_CODE}"
+        EDW_RUN_WEB_PORT = "${options.env.EDW_RUN_WEB_PORT}"
+        EDW_RUN_WEB_SECRET_KEY = "${options.env.EDW_RUN_WEB_SECRET_KEY}"
+        EDW_RUN_WEB_SENTRY_DSN = "${options.env.EDW_RUN_WEB_SENTRY_DSN}"
+        EDW_RUN_WEB_SENTRY_PUBLIC_DSN = "${options.env.EDW_RUN_WEB_SENTRY_PUBLIC_DSN}"
+        EDW_RUN_WEB_STATIC_ROOT = "${options.env.EDW_RUN_WEB_STATIC_ROOT}"
+        {{- range service "ecolex-solr" }}
+        EDW_RUN_SOLR_URI = "http://{{.Address}}:{{.Port}}"
+        {{- end }}
+        {{- range service "ecolex-mariadb" }}
+        MYSQL_HOST = "{{.Address}}"
+        MYSQL_PORT = "{{.Port}}"
+        {{- end }}
         EOF
         destination = "local/docker.env"
         env = true
