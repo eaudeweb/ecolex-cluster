@@ -28,8 +28,15 @@ def render(filename, **kwargs):
     return jinja.get_template(filename).render(**kwargs)
 
 
+def get_images():
+    rv = dict(versions['docker-images'])
+    if 'docker-images' in config:
+        rv.update(config['docker-images'])
+    return rv
+
+
 class Options:
-    images = dict(versions['docker-images'], **config['docker-images'])
+    images = get_images()
     env = dict(config['env'])
     volumes = config.get('ecolex', 'volumes')
     fixtures = path / 'fixtures'
