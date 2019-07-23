@@ -6,7 +6,7 @@ job "ecolex" {
     task "web" {
       driver = "docker"
       config {
-        image = "${options.images.ecolex_web}"
+        image = "${options.images.ecolex-web}"
         volumes = [
           "${options.volumes}/www_ecolex_static:/www_static",
           "${options.volumes}/web_logs:/home/web/ecolex/logs",
@@ -35,7 +35,7 @@ job "ecolex" {
           {{- range service "ecolex-solr" }}
           EDW_RUN_SOLR_URI = "http://{{.Address}}:{{.Port}}"
           {{- end }}
-          {{- range service "ecolex-maria" }}
+          {{- range service "ecolex-mariadb" }}
           MYSQL_HOST = {{.Address}}
           MYSQL_PORT = {{.Port}}
           {{- end }}
@@ -57,17 +57,17 @@ job "ecolex" {
     }
   }
 
-  group "maria" {
-    task "maria" {
+  group "mariadb" {
+    task "mariadb" {
       driver = "docker"
       config {
-        image = "${options.images.ecolex_mariadb}"
+        image = "${options.images.ecolex-mariadb}"
         args = ["bash", "/local/startup.sh"]
         volumes = [
-          "${options.volumes}/maria:/var/lib/mysql",
+          "${options.volumes}/mariadb:/var/lib/mysql",
         ]
         port_map {
-          maria = 3306
+          mariadb = 3306
         }
       }
       template {
@@ -98,7 +98,7 @@ job "ecolex" {
         MYSQL_PASSWORD = "${options.env.MYSQL_PASSWORD}"
         MYSQL_ROOT_PASSWORD = "${options.env.MYSQL_PASSWORD}"
         EOF
-        destination = "local/maria.env"
+        destination = "local/mariadb.env"
         env = true
       }
       resources {
@@ -106,12 +106,12 @@ job "ecolex" {
         memory = 250
         network {
           mbits = 10
-          port "maria" {}
+          port "mariadb" {}
         }
       }
       service {
-        name = "nextcloud-maria"
-        port = "maria"
+        name = "ecolex-mariadb"
+        port = "mariadb"
       }
     }
   }
@@ -120,7 +120,7 @@ job "ecolex" {
     task "solr" {
       driver = "docker"
       config {
-        image = "${options.images.ecolex_solr}"
+        image = "${options.images.ecolex-solr}"
         args = [
           "docker-entrypoint.sh",
           "solr-precreate",
