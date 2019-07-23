@@ -14,6 +14,9 @@ job "ecolex" {
         port_map {
           http = 8000
         }
+        labels {
+          cluster_task = "ecolex-web"
+        }
       }
       template {
         data = <<-EOF
@@ -68,6 +71,9 @@ job "ecolex" {
         ]
         port_map {
           mariadb = 3306
+        }
+        labels {
+          cluster_task = "ecolex-mariadb"
         }
       }
       template {
@@ -134,6 +140,9 @@ job "ecolex" {
         ]
         port_map {
           solr = 8983
+        }
+        labels {
+          cluster_task = "ecolex-solr"
         }
       }
       template {
