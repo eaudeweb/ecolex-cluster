@@ -7,6 +7,7 @@ job "ecolex" {
       driver = "docker"
       config {
         image = "${options.images['ecolex-web']}"
+        entrypoint = ["/local/entrypoint.sh"]
         volumes = [
           "${options.volumes}/www_ecolex_static:/www_static",
           "${options.volumes}/web_logs:/home/web/ecolex/logs",
@@ -17,6 +18,16 @@ job "ecolex" {
         labels {
           cluster_task = "ecolex-web"
         }
+      }
+      template {
+        data = <<-EOF
+        #!/bin/sh
+        set -ex
+        ./manage.py collectstatic --noinput
+        exec docker-entrypoint.sh
+        EOF
+        destination = "local/entrypoint.sh"
+        perms = "755"
       }
       template {
         data = <<-EOF
