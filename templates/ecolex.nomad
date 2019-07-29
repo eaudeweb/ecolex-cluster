@@ -131,7 +131,7 @@ job "ecolex" {
         entrypoint = ["/local/entrypoint.sh"]
         volumes = [
           "${options.fixtures}/solr/solr_scripts/:/docker-entrypoint-initdb.d/",
-          "${options.volumes}/solr:/opt/solr/server/solr/mycores",
+          "${options.volumes}/solr/mycores:/opt/solr/server/solr/mycores",
           "${options.fixtures}/solr/ecolex_initial_conf:/core-template/ecolex_initial_conf:ro",
         ]
         port_map {
