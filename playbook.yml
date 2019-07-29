@@ -18,3 +18,10 @@
           - /var/run/docker.sock:/var/run/docker.sock
           - /app/var:/app/var
         state: started
+
+    - name: ecolex
+      shell:
+        cmd: |
+          sudo pip3 install pipenv
+          pipenv install
+          pipenv run ./ecolex.py deploy
