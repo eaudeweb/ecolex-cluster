@@ -19,6 +19,10 @@
           - /app/var:/app/var
         state: started
 
+    - name: wait for cluster
+      shell:
+        cmd: docker exec cluster ./cluster.py wait
+
     - name: ecolex
       shell:
         cmd: |
