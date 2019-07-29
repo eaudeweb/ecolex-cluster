@@ -8,6 +8,7 @@ job "ecolex" {
       config {
         image = "${options.images['ecolex-web']}"
         entrypoint = ["/local/entrypoint.sh"]
+        args = ["run"]
         volumes = [
           "${options.volumes}/www_ecolex_static:/www_static",
           "${options.volumes}/web_logs:/home/web/ecolex/logs",
@@ -21,10 +22,10 @@ job "ecolex" {
       }
       template {
         data = <<-EOF
-        #!/bin/sh
-        set -ex
+        #!/bin/bash -ex
+        cd /home/web/ecolex
         ./manage.py collectstatic --noinput
-        exec docker-entrypoint.sh
+        exec /home/web/bin/docker-entrypoint.sh "$@"
         EOF
         destination = "local/entrypoint.sh"
         perms = "755"
