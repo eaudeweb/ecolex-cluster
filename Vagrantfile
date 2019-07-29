@@ -13,6 +13,10 @@ Vagrant.configure("2") do |config|
   config.vm.provision 'ansible_local' do |ansible|
     ansible.config_file = 'ansible.cfg'
     ansible.playbook = 'playbook.yml'
+
+    if ENV['ECOLEX_PROVISION_QUICK']
+      ansible.start_at_task = 'ecolex'
+    end
   end
 
   config.vm.provider :vmck do |vmck|
