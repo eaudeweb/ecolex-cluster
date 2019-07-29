@@ -128,12 +128,7 @@ job "ecolex" {
       driver = "docker"
       config {
         image = "${options.images['ecolex-solr']}"
-        args = [
-          "docker-entrypoint.sh",
-          "solr-precreate",
-          "ecolex",
-          "/core-template/ecolex_initial_conf",
-        ]
+        entrypoint = ["/local/entrypoint.sh"]
         volumes = [
           "${options.fixtures}/solr/solr_scripts/:/docker-entrypoint-initdb.d/",
           "${options.volumes}/solr:/opt/solr/server/solr/mycores",
@@ -145,6 +140,15 @@ job "ecolex" {
         labels {
           cluster_task = "ecolex-solr"
         }
+      }
+      template {
+        data = <<-EOF
+        #!/bin/sh
+        set -ex
+        exec docker-entrypoint.sh solr-precreate ecolex /core-template/ecolex_initial_conf
+        EOF
+        destination = "local/entrypoint.sh"
+        perms = "755"
       }
       template {
         data = <<-EOF
