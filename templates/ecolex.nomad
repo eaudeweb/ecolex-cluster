@@ -161,7 +161,7 @@ job "ecolex" {
       }
       resources {
         cpu = 100
-        memory = 250
+        memory = 4000
         network {
           mbits = 10
           port "solr" {}

@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider :vmck do |vmck|
     vmck.vmck_url = ENV['VMCK_URL'] || 'http://10.66.60.1:9995'
-    vmck.memory = 4000
+    vmck.memory = 12000
     vmck.cpus = 2
   end
 end
