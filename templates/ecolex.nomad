@@ -73,6 +73,58 @@ job "ecolex" {
     }
   }
 
+  group "lb" {
+    task "nginx" {
+      driver = "docker"
+      config = {
+        image = "nginx:1.17"
+        port_map {
+          nginx = 80
+        }
+        volumes = [
+          "local/nginx.conf:/etc/nginx/conf.d/default.conf:ro",
+          "${options.volumes}/www_ecolex_static:/www_static",
+        ]
+        labels {
+          cluster_task = "ecolex-nginx"
+        }
+      }
+      template {
+        data = <<EOF
+          server {
+            listen 80 default_server;
+
+            {{- with service "ecolex-web" }}
+              {{- with index . 0 }}
+                location /static {
+                  alias /www_static;
+                }
+                location / {
+                  proxy_pass http://{{ .Address }}:{{ .Port }};
+                }
+              {{- end }}
+            {{- end }}
+          }
+          server_names_hash_bucket_size 128;
+          EOF
+        destination = "local/nginx.conf"
+      }
+      resources {
+        memory = 100
+        network {
+          mbits = 10
+          port "nginx" {
+            static = 8000
+          }
+        }
+      }
+      service {
+        name = "ecolex-nginx"
+        port = "nginx"
+      }
+    }
+  }
+
   group "mariadb" {
     task "mariadb" {
       driver = "docker"
