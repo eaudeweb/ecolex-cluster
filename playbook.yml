@@ -1,5 +1,6 @@
 ---
 - hosts: '*'
   roles:
+    - debug
     - cluster
     - ecolex

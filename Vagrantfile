@@ -17,6 +17,10 @@ Vagrant.configure("2") do |config|
     if ENV['ECOLEX_PROVISION_QUICK']
       ansible.start_at_task = 'ecolex'
     end
+
+    if ENV['DEBUG']
+      ansible.verbose = 'vvv'
+    end
   end
 
   config.vm.provider :vmck do |vmck|
