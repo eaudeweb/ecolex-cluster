@@ -14,8 +14,8 @@ Vagrant.configure("2") do |config|
     ansible.config_file = 'ansible.cfg'
     ansible.playbook = 'playbook.yml'
 
-    if ENV['ECOLEX_PROVISION_QUICK']
-      ansible.start_at_task = 'ecolex'
+    if ENV['ECOLEX_PROVISION_START_AT']
+      ansible.start_at_task = ENV['ECOLEX_PROVISION_START_AT']
     end
 
     if ENV['DEBUG']
