@@ -17,7 +17,7 @@ job "ecolex" {
           http = 8000
         }
         labels {
-          cluster_task = "ecolex-web"
+          ecolex = "web"
         }
       }
       template {
@@ -86,7 +86,7 @@ job "ecolex" {
           "${options.volumes}/www_ecolex_static:/www_static",
         ]
         labels {
-          cluster_task = "ecolex-nginx"
+          ecolex = "nginx"
         }
       }
       template {
@@ -138,7 +138,7 @@ job "ecolex" {
           mariadb = 3306
         }
         labels {
-          cluster_task = "ecolex-mariadb"
+          ecolex = "mariadb"
         }
       }
       template {
@@ -202,7 +202,7 @@ job "ecolex" {
           solr = 8983
         }
         labels {
-          cluster_task = "ecolex-solr"
+          ecolex = "solr"
         }
       }
       template {
