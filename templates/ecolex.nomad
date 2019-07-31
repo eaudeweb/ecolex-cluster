@@ -2,7 +2,7 @@ job "ecolex" {
   datacenters = ["dc1"]
   type = "service"
 
-  group "app" {
+  group "web" {
     task "web" {
       driver = "docker"
       config {
