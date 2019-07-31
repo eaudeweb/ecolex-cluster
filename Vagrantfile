@@ -31,8 +31,8 @@ Vagrant.configure("2") do |config|
     vmck.vmck_url = ENV['VMCK_URL'] || 'http://10.66.60.1:9995'
     vmck.memory = 12000
     vmck.cpus = 2
-    if ENV['VMCK_USBSTICK']
-      vmck.usbstick = ENV['VMCK_USBSTICK']
+    if ENV['VMCK_STORAGE']
+      vmck.storage = ENV['VMCK_STORAGE']
     end
   end
 end
