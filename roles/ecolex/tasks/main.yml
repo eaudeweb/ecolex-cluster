@@ -1,0 +1,10 @@
+---
+- name: ecolex
+  shell:
+    cmd: |
+      set -ex
+      sudo pip3 install pipenv
+      pipenv install
+      sudo mkdir -p /opt/volumes/ecolex/solr/mycores
+      sudo chown -R 8983:8983 /opt/volumes/ecolex/solr/mycores
+      pipenv run ./ecolex.py deploy

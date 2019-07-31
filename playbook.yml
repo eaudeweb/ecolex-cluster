@@ -1,34 +1,5 @@
 ---
 - hosts: '*'
-  tasks:
-
-    - name: python pip
-      become: true
-      apt:
-        name: python3-docker
-
-    - name: cluster
-      docker_container:
-        name: cluster
-        image: liquidinvestigations/cluster:norepo
-        init: true
-        privileged: true
-        network_mode: 'host'
-        volumes:
-          - /var/run/docker.sock:/var/run/docker.sock
-          - /app/var:/app/var
-        state: started
-
-    - name: wait for cluster
-      shell:
-        cmd: docker exec cluster ./cluster.py wait
-
-    - name: ecolex
-      shell:
-        cmd: |
-          set -ex
-          sudo pip3 install pipenv
-          pipenv install
-          sudo mkdir -p /opt/volumes/ecolex/solr/mycores
-          sudo chown -R 8983:8983 /opt/volumes/ecolex/solr/mycores
-          pipenv run ./ecolex.py deploy
+  roles:
+    - cluster
+    - ecolex
