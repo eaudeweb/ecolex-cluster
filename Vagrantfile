@@ -18,6 +18,10 @@ Vagrant.configure("2") do |config|
       ansible.start_at_task = ENV['ECOLEX_PROVISION_START_AT']
     end
 
+    vars = {}
+    vars['wireguard_conf'] = ENV['WIREGUARD_CONF'] if ENV['WIREGUARD_CONF']
+    ansible.host_vars = {'default' => vars}
+
     if ENV['DEBUG']
       ansible.verbose = 'vvv'
     end

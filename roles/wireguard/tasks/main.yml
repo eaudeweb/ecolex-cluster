@@ -1,0 +1,19 @@
+---
+- name: wireguard ppa
+  become: true
+  apt_repository:
+    repo: 'ppa:wireguard/wireguard'
+
+- name: wireguard
+  become: true
+  apt:
+    name: wireguard
+
+- name: wg0.conf
+  become: true
+  template:
+    src: "{{ wireguard_conf }}"
+    dest: /etc/wireguard/wg0.conf
+    mode: 0600
+  notify:
+    - restart wg0
