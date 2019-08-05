@@ -12,7 +12,7 @@ pipenv run ./ecolex.py deploy
 
 To run commands in the ecolex-web docker container:
 ```shell
-docker exec -it $(docker ps -qf label=cluster_task=ecolex-web) bash
+docker exec -it "$(docker ps -qf label=ecolex=web)" bash
 ```
 
 Initial setup:
