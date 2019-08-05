@@ -49,7 +49,7 @@ job "ecolex" {
         EDW_RUN_WEB_SENTRY_PUBLIC_DSN = "${options.env.EDW_RUN_WEB_SENTRY_PUBLIC_DSN}"
         EDW_RUN_WEB_STATIC_ROOT = "${options.env.EDW_RUN_WEB_STATIC_ROOT}"
         {{- range service "ecolex-solr" }}
-        EDW_RUN_SOLR_URI = "http://{{.Address}}:{{.Port}}"
+        EDW_RUN_SOLR_URI = "http://{{.Address}}:{{.Port}}/solr/ecolex"
         {{- end }}
         {{- range service "ecolex-mariadb" }}
         MYSQL_HOST = "{{.Address}}"
