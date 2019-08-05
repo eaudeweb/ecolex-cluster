@@ -3,13 +3,13 @@ name: test
 
 steps:
 
-- name: flake8
+- name: Flake8
   image: python:3.7
   commands:
   - pip install flake8 > /dev/null
   - flake8
 
-- name: deploy to qemu
+- name: Vagrant
   image: vmck/vagrant-vmck:latest
   commands:
   - export VMCK_URL=http://$VMCK_IP:$VMCK_PORT
