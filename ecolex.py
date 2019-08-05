@@ -14,6 +14,7 @@ def read_config(config_path):
     config.read(config_path)
     return config
 
+
 versions = read_config(path / 'versions.ini')
 config = read_config(path / 'ecolex.ini')
 nomad = config.get('cluster', 'nomad')
