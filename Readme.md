@@ -9,3 +9,14 @@ Deploy to the cluster:
 pipenv install
 pipenv run ./ecolex.py deploy
 ```
+
+To run commands in the ecolex-web docker container:
+```shell
+docker exec -it "$(docker ps -qf label=ecolex=web)" bash
+```
+
+Initial setup:
+```
+./manage.py collectstatic
+./manage.py loaddata ecolex/fixtures/initial_data.json
+```

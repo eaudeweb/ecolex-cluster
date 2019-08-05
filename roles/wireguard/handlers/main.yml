@@ -1,0 +1,8 @@
+---
+- name: restart wg0
+  become: true
+  shell:
+    cmd: |
+      set -ex
+      wg-quick down wg0 || echo 'wg0 already down?'
+      wg-quick up wg0

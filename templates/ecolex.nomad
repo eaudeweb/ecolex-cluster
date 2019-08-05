@@ -2,11 +2,13 @@ job "ecolex" {
   datacenters = ["dc1"]
   type = "service"
 
-  group "app" {
+  group "web" {
     task "web" {
       driver = "docker"
       config {
         image = "${options.images['ecolex-web']}"
+        entrypoint = ["/local/entrypoint.sh"]
+        args = ["run"]
         volumes = [
           "${options.volumes}/www_ecolex_static:/www_static",
           "${options.volumes}/web_logs:/home/web/ecolex/logs",
@@ -15,8 +17,18 @@ job "ecolex" {
           http = 8000
         }
         labels {
-          cluster_task = "ecolex-web"
+          ecolex = "web"
         }
+      }
+      template {
+        data = <<-EOF
+        #!/bin/bash -ex
+        cd /home/web/ecolex
+        ./manage.py collectstatic --noinput
+        exec /home/web/bin/docker-entrypoint.sh "$@"
+        EOF
+        destination = "local/entrypoint.sh"
+        perms = "755"
       }
       template {
         data = <<-EOF
@@ -37,7 +49,7 @@ job "ecolex" {
         EDW_RUN_WEB_SENTRY_PUBLIC_DSN = "${options.env.EDW_RUN_WEB_SENTRY_PUBLIC_DSN}"
         EDW_RUN_WEB_STATIC_ROOT = "${options.env.EDW_RUN_WEB_STATIC_ROOT}"
         {{- range service "ecolex-solr" }}
-        EDW_RUN_SOLR_URI = "http://{{.Address}}:{{.Port}}"
+        EDW_RUN_SOLR_URI = "http://{{.Address}}:{{.Port}}/solr/ecolex"
         {{- end }}
         {{- range service "ecolex-mariadb" }}
         MYSQL_HOST = "{{.Address}}"
@@ -61,6 +73,58 @@ job "ecolex" {
     }
   }
 
+  group "lb" {
+    task "nginx" {
+      driver = "docker"
+      config = {
+        image = "nginx:1.17"
+        port_map {
+          nginx = 80
+        }
+        volumes = [
+          "local/nginx.conf:/etc/nginx/conf.d/default.conf:ro",
+          "${options.volumes}/www_ecolex_static:/www_static",
+        ]
+        labels {
+          ecolex = "nginx"
+        }
+      }
+      template {
+        data = <<EOF
+          server {
+            listen 80 default_server;
+
+            {{- with service "ecolex-web" }}
+              {{- with index . 0 }}
+                location /static {
+                  alias /www_static;
+                }
+                location / {
+                  proxy_pass http://{{ .Address }}:{{ .Port }};
+                }
+              {{- end }}
+            {{- end }}
+          }
+          server_names_hash_bucket_size 128;
+          EOF
+        destination = "local/nginx.conf"
+      }
+      resources {
+        memory = 100
+        network {
+          mbits = 10
+          port "nginx" {
+            static = 8000
+          }
+        }
+      }
+      service {
+        name = "ecolex-nginx"
+        port = "nginx"
+      }
+    }
+  }
+
   group "mariadb" {
     task "mariadb" {
       driver = "docker"
@@ -74,7 +138,7 @@ job "ecolex" {
           mariadb = 3306
         }
         labels {
-          cluster_task = "ecolex-mariadb"
+          ecolex = "mariadb"
         }
       }
       template {
@@ -128,23 +192,27 @@ job "ecolex" {
       driver = "docker"
       config {
         image = "${options.images['ecolex-solr']}"
-        args = [
-          "docker-entrypoint.sh",
-          "solr-precreate",
-          "ecolex",
-          "/core-template/ecolex_initial_conf",
-        ]
+        entrypoint = ["/local/entrypoint.sh"]
         volumes = [
           "${options.fixtures}/solr/solr_scripts/:/docker-entrypoint-initdb.d/",
-          "${options.volumes}/solr:/opt/solr/server/solr/mycores",
+          "${options.volumes}/solr/mycores:/opt/solr/server/solr/mycores",
           "${options.fixtures}/solr/ecolex_initial_conf:/core-template/ecolex_initial_conf:ro",
         ]
         port_map {
           solr = 8983
         }
         labels {
-          cluster_task = "ecolex-solr"
+          ecolex = "solr"
         }
+      }
+      template {
+        data = <<-EOF
+        #!/bin/sh
+        set -ex
+        exec docker-entrypoint.sh solr-precreate ecolex /core-template/ecolex_initial_conf
+        EOF
+        destination = "local/entrypoint.sh"
+        perms = "755"
       }
       template {
         data = <<-EOF
@@ -157,7 +225,7 @@ job "ecolex" {
       }
       resources {
         cpu = 100
-        memory = 250
+        memory = 4000
         network {
           mbits = 10
           port "solr" {}

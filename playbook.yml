@@ -1,0 +1,7 @@
+---
+- hosts: '*'
+  roles:
+    - debug
+    - {role: wireguard, when: 'wireguard_conf is defined'}
+    - cluster
+    - ecolex
