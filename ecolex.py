@@ -8,6 +8,7 @@ import click
 
 path = Path(__file__).parent.resolve()
 
+
 def read_config(config_path):
     config = ConfigParser()
     config.optionxform = str
