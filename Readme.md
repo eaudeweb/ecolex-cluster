@@ -1,3 +1,5 @@
+[![Build Status](https://jenkins.liquiddemo.org/api/badges/eaudeweb/ecolex-cluster/status.svg)](https://jenkins.liquiddemo.org/eaudeweb/ecolex-cluster)
+
 ## Deployment
 Copy the example config file and customize it:
 ```shell

@@ -1,0 +1,19 @@
+kind: pipeline
+name: test
+
+steps:
+
+- name: flake8
+  image: python:3.7
+  commands:
+  - pip install flake8 > /dev/null
+  - flake8
+
+- name: deploy to qemu
+  image: vmck/vagrant-vmck:latest
+  commands:
+  - export VMCK_URL=http://$VMCK_IP:$VMCK_PORT
+  - export SHUTDOWN=+30
+  - echo SHUTDOWN=$SHUTDOWN VMCK_URL=$VMCK_URL
+  - vagrant up
+  - vagrant destroy -f
