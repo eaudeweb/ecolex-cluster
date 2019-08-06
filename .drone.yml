@@ -15,5 +15,6 @@ steps:
   - export VMCK_URL=http://$VMCK_IP:$VMCK_PORT
   - export SHUTDOWN=+30
   - echo SHUTDOWN=$SHUTDOWN VMCK_URL=$VMCK_URL
+  - cp examples/ecolex.ini ./
   - vagrant up
   - vagrant destroy -f
