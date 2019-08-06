@@ -10,6 +10,10 @@ Vagrant.configure("2") do |config|
   config.nfs.functional = false
   config.smb.functional = false
 
+  if ENV['SHUTDOWN']
+    config.vm.provision 'shell', inline: "sudo shutdown #{ENV['SHUTDOWN']}"
+  end
+
   config.vm.provision 'ansible_local' do |ansible|
     ansible.config_file = 'ansible.cfg'
     ansible.playbook = 'playbook.yml'
