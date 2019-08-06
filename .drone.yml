@@ -10,7 +10,7 @@ steps:
   - flake8
 
 - name: Vagrant
-  image: vmck/vagrant-vmck:latest
+  image: vmck/vagrant-vmck:0.1.0
   commands:
   - export VMCK_URL=http://$VMCK_IP:$VMCK_PORT
   - export SHUTDOWN=+30
