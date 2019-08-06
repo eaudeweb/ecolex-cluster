@@ -16,4 +16,5 @@ steps:
   - export SHUTDOWN=+30
   - cp examples/ecolex.ini ./
   - vagrant up
+  - vagrant ssh -- ./test.sh
   - vagrant destroy
