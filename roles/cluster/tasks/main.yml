@@ -19,3 +19,8 @@
 - name: wait for cluster
   shell:
     cmd: docker exec cluster ./cluster.py wait
+
+- name: publish the secrets
+  become: true
+  shell:
+    cmd: chmod 666 /app/var/vault-secrets.ini

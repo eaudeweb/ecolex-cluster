@@ -1,3 +1,5 @@
+{% macro vault_secret(name) %}{{ with secret "ecolex/${name}" }}{{ .Data.value | toJSON }}{{ end }}{% endmacro %}
+
 job "ecolex" {
   datacenters = ["dc1"]
   type = "service"
@@ -36,17 +38,17 @@ job "ecolex" {
         EDW_RUN_WEB_DEBUG = "${options.env.EDW_RUN_WEB_DEBUG}"
         MYSQL_DATABASE = "${options.env.MYSQL_DATABASE}"
         MYSQL_USER = "${options.env.MYSQL_USER}"
-        MYSQL_PASSWORD = "${options.env.MYSQL_PASSWORD}"
-        EDW_RUN_WEB_ECOLEX_CODE = "${options.env.EDW_RUN_WEB_ECOLEX_CODE}"
-        EDW_RUN_WEB_FAOLEX_API_KEY = "${options.env.EDW_RUN_WEB_FAOLEX_API_KEY}"
-        EDW_RUN_WEB_FAOLEX_CODE = "${options.env.EDW_RUN_WEB_FAOLEX_CODE}"
-        EDW_RUN_WEB_FAOLEX_CODE_2 = "${options.env.EDW_RUN_WEB_FAOLEX_CODE_2}"
+        MYSQL_PASSWORD = ${vault_secret('mysql-password')}
+        EDW_RUN_WEB_ECOLEX_CODE = ${vault_secret('ecolex-code')}
+        EDW_RUN_WEB_FAOLEX_API_KEY = ${vault_secret('faolex-api-key')}
+        EDW_RUN_WEB_FAOLEX_CODE = ${vault_secret('faolex-code')}
+        EDW_RUN_WEB_FAOLEX_CODE_2 = ${vault_secret('faolex-code-2')}
         EDW_RUN_WEB_FAOLEX_ENABLED = "${options.env.EDW_RUN_WEB_FAOLEX_ENABLED}"
-        EDW_RUN_WEB_INFORMEA_CODE = "${options.env.EDW_RUN_WEB_INFORMEA_CODE}"
+        EDW_RUN_WEB_INFORMEA_CODE = ${vault_secret('informea-code')}
         EDW_RUN_WEB_PORT = "${options.env.EDW_RUN_WEB_PORT}"
-        EDW_RUN_WEB_SECRET_KEY = "${options.env.EDW_RUN_WEB_SECRET_KEY}"
-        EDW_RUN_WEB_SENTRY_DSN = "${options.env.EDW_RUN_WEB_SENTRY_DSN}"
-        EDW_RUN_WEB_SENTRY_PUBLIC_DSN = "${options.env.EDW_RUN_WEB_SENTRY_PUBLIC_DSN}"
+        EDW_RUN_WEB_SECRET_KEY = ${vault_secret('web-secret-key')}
+        EDW_RUN_WEB_SENTRY_DSN = ${vault_secret('sentry-dsn')}
+        EDW_RUN_WEB_SENTRY_PUBLIC_DSN = ${vault_secret('sentry-public-dsn')}
         EDW_RUN_WEB_STATIC_ROOT = "${options.env.EDW_RUN_WEB_STATIC_ROOT}"
         {{- range service "ecolex-solr" }}
         EDW_RUN_SOLR_URI = "http://{{.Address}}:{{.Port}}/solr/ecolex"
@@ -166,8 +168,8 @@ job "ecolex" {
         data = <<-EOF
         MYSQL_DATABASE = "${options.env.MYSQL_DATABASE}"
         MYSQL_USER = "${options.env.MYSQL_USER}"
-        MYSQL_PASSWORD = "${options.env.MYSQL_PASSWORD}"
-        MYSQL_ROOT_PASSWORD = "${options.env.MYSQL_PASSWORD}"
+        MYSQL_PASSWORD = ${vault_secret('mysql-password')}
+        MYSQL_ROOT_PASSWORD = ${vault_secret('mysql-root-password')}
         EOF
         destination = "local/mariadb.env"
         env = true

@@ -19,6 +19,10 @@ def read_config(config_path):
 versions = read_config(path / 'versions.ini')
 config = read_config(path / 'ecolex.ini')
 nomad = config.get('cluster', 'nomad')
+vault_url = config.get('cluster', 'vault')
+vault = requests.Session()
+vault_config = read_config(path / config.get('cluster', 'vault_secrets'))
+vault.headers['X-Vault-Token'] = vault_config.get('vault', 'root_token')
 
 jinja = Environment(
     variable_start_string='${',
@@ -50,8 +54,35 @@ def cli():
     pass
 
 
+def ensure_vault_engine():
+    mounts = vault.get(f'{vault_url}/v1/sys/mounts').json()
+    if 'ecolex/' not in mounts['data']:
+        vault.post(f'{vault_url}/v1/sys/mounts/ecolex', json={'type': 'kv'})
+
+
+def set_secret(name, value):
+    return vault.put(f'{vault_url}/v1/ecolex/{name}', json={'value': value})
+
+
+def get_secret(name):
+    # TODO move secrets someplace else
+    return Options.env.get(name, '')
+
+
 @cli.command()
 def deploy():
+    ensure_vault_engine()
+    set_secret('mysql-password',      get_secret('MYSQL_PASSWORD'))
+    set_secret('mysql-root-password', get_secret('MYSQL_ROOT_PASSWORD'))
+    set_secret('web-secret-key',      get_secret('EDW_RUN_WEB_SECRET_KEY'))
+    set_secret('faolex-api-key',      get_secret('EDW_RUN_WEB_FAOLEX_API_KEY'))
+    set_secret('sentry-dsn',          get_secret('EDW_RUN_WEB_SENTRY_DSN'))
+    set_secret('sentry-public-dsn',   get_secret('EDW_RUN_WEB_SENTRY_PUBLIC_DSN'))
+    set_secret('ecolex-code',         get_secret('EDW_RUN_WEB_ECOLEX_CODE'))
+    set_secret('informea-code',       get_secret('EDW_RUN_WEB_INFORMEA_CODE'))
+    set_secret('faolex-code',         get_secret('EDW_RUN_WEB_FAOLEX_CODE'))
+    set_secret('faolex-code-2',       get_secret('EDW_RUN_WEB_FAOLEX_CODE_2'))
+
     hcl = render('ecolex.nomad', options=Options())
     spec = requests.post(f'{nomad}/v1/jobs/parse', json={'JobHCL': hcl}).json()
     return requests.post(f'{nomad}/v1/jobs', json={'Job': spec}).json()
